@@ -24,8 +24,7 @@ export async function signUp(req, res) {
             return res.status(400).json({message:"User already exists"});
         }
 
-        const idx = Math.floor(Math.random() * 100)+1; //generate a num btween 1-100
-
+        const idx = Math.floor(Math.random() * 100)+1; 
         const randomAvatar = `https://avatars.iran.liara.run/public${idx}.png`;
         
 
