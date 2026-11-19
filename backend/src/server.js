@@ -18,8 +18,7 @@ app.use('/api/auth', router);
 app.use('/api/users', userRoutes);
 app.use('/api/chat',chatRoutes)
 
-connectDB();
-
+await connectDB();
 
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
