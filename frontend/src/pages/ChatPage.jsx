@@ -8,18 +8,15 @@ import {
   Channel,
   ChannelHeader,
   Chat,
-  MessageInput,
+  MessageComposer,
   MessageList,
   Thread,
-  Window,
 } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
 import toast from "react-hot-toast";
 
 import ChatLoader from "../components/ChatLoader";
 import CallButton from "../components/CallButton";
-
-const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
 const ChatPage = () => {
   const { id: targetUserId } = useParams();
@@ -31,9 +28,9 @@ const ChatPage = () => {
   const { authUser } = useAuthUser();
 
   const { data: tokenData } = useQuery({
-    queryKey: ["streamToken"],
-    queryFn: getStreamToken,
-    enabled: !!authUser, // this will run only when authUser is available
+    queryKey: ["streamToken", targetUserId],
+    queryFn: () => getStreamToken(targetUserId),
+    enabled: !!authUser && !!targetUserId,
   });
 
   useEffect(() => {
@@ -42,8 +39,11 @@ const ChatPage = () => {
 
       try {
         console.log("Initializing stream chat client...");
+        if (!tokenData.apiKey) {
+          throw new Error("Stream API key is missing from the token response");
+        }
 
-        const client = StreamChat.getInstance(STREAM_API_KEY);
+        const client = StreamChat.getInstance(tokenData.apiKey);
 
         await client.connectUser(
           {
@@ -98,13 +98,11 @@ const ChatPage = () => {
     <div className="h-[93vh]">
       <Chat client={chatClient}>
         <Channel channel={channel}>
-          <div className="w-full relative">
+          <div className="relative flex h-full min-h-0 w-full flex-col">
             <CallButton handleVideoCall={handleVideoCall} />
-            <Window>
-              <ChannelHeader />
-              <MessageList />
-              <MessageInput focus />
-            </Window>
+            <ChannelHeader />
+            <MessageList />
+            <MessageComposer focus />
           </div>
           <Thread />
         </Channel>

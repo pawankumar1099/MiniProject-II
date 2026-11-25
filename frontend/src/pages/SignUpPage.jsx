@@ -3,6 +3,7 @@ import { ShipWheelIcon } from "lucide-react";
 import { Link } from "react-router";
 
 import useSignUp from "../hooks/useSignUp";
+import { getErrorMessage } from "../lib/utils";
 
 const SignUpPage = () => {
   const [signupData, setSignupData] = useState({
@@ -49,7 +50,7 @@ const SignUpPage = () => {
           {/* ERROR MESSAGE IF ANY */}
           {error && (
             <div className="alert alert-error mb-4">
-              <span>{error.response.data.message}</span>
+              <span>{getErrorMessage(error)}</span>
             </div>
           )}
 

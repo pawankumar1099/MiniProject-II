@@ -19,8 +19,6 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import toast from "react-hot-toast";
 import PageLoader from "../components/PageLoader";
 
-const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
-
 const CallPage = () => {
   const { id: callId } = useParams();
   const [client, setClient] = useState(null);
@@ -31,16 +29,19 @@ const CallPage = () => {
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
-    queryFn: getStreamToken,
+    queryFn: () => getStreamToken(),
     enabled: !!authUser,
   });
 
   useEffect(() => {
     const initCall = async () => {
-      if (!tokenData.token || !authUser || !callId) return;
+      if (!tokenData?.token || !authUser || !callId) return;
 
       try {
         console.log("Initializing Stream video client...");
+        if (!tokenData.apiKey) {
+          throw new Error("Stream API key is missing from the token response");
+        }
 
         const user = {
           id: authUser._id,
@@ -49,7 +50,7 @@ const CallPage = () => {
         };
 
         const videoClient = new StreamVideoClient({
-          apiKey: STREAM_API_KEY,
+          apiKey: tokenData.apiKey,
           user,
           token: tokenData.token,
         });

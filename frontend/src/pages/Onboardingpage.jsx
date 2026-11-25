@@ -3,8 +3,9 @@ import useAuthUser from "../hooks/useAuthUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { completeOnboarding } from "../lib/api";
-import { LoaderIcon, MapPinIcon, ShipWheelIcon, ShuffleIcon } from "lucide-react";
+import { CameraIcon, LoaderIcon, MapPinIcon, ShipWheelIcon, ShuffleIcon } from "lucide-react";
 import { LANGUAGES } from "../constants";
+import { getErrorMessage } from "../lib/utils";
 
 const OnboardingPage = () => {
   const { authUser } = useAuthUser();
@@ -27,7 +28,7 @@ const OnboardingPage = () => {
     },
 
     onError: (error) => {
-      toast.error(error.response.data.message);
+      toast.error(getErrorMessage(error));
     },
   });
 
